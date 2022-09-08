@@ -24,7 +24,7 @@ namespace ETicaretAPI.Persistence.Repositories
 
         public async Task<bool> AddAsync(T entity)
         {
-            EntityEntry entityEntry=await Table.AddAsync(entity);
+            EntityEntry<T> entityEntry=await Table.AddAsync(entity);
             return entityEntry.State == EntityState.Added;
         }
 
@@ -37,15 +37,14 @@ namespace ETicaretAPI.Persistence.Repositories
 
         public bool Delete(T entity)
         {
-            Table.Remove(entity);
-            return true;
+            EntityEntry entityEntry = Table.Remove(entity);
+            return entityEntry.State == EntityState.Deleted;
         }
 
         public async Task<bool> DeleteAsync(string Id)
         {
             var deleted = await Table.FirstOrDefaultAsync(t => t.Id == Guid.Parse(Id));
-            EntityEntry entityEntry = Table.Remove(deleted);
-            return entityEntry.State == EntityState.Deleted;
+            return Delete(deleted);
         }
 
         public async Task<int> SaveChangesAsync()
@@ -55,7 +54,7 @@ namespace ETicaretAPI.Persistence.Repositories
 
         public bool Update(T entity)
         {
-            EntityEntry entityEntry= Table.Update(entity);
+            EntityEntry<T> entityEntry= Table.Update(entity);
             return entityEntry.State == EntityState.Modified;
         }
     }
