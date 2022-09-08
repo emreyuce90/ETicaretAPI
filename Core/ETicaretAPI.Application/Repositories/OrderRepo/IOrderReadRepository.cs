@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ETicaretAPI.Application.Repositories.CustomerRepo
+namespace ETicaretAPI.Application.Repositories.OrderRepo
 {
-    public interface CustomerWriteRepository:IWriteRepository<Customer>
+    public interface IOrderReadRepository:IReadRepository<Order>
     {
-
     }
 }

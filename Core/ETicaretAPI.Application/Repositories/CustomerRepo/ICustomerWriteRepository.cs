@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace ETicaretAPI.Application.Repositories.CustomerRepo
 {
-    public interface CustomerReadRepository:IReadRepository<Customer>
+    public interface ICustomerWriteRepository:IWriteRepository<Customer>
     {
+
     }
 }
