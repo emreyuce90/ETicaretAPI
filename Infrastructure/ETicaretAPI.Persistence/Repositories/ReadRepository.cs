@@ -22,27 +22,67 @@ namespace ETicaretAPI.Persistence.Repositories
 
         public DbSet<T> Table => _context.Set<T>();
 
-        public async Task<bool> AnyAsync(Expression<Func<T, bool>> expression)
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> expression, bool isTracked = true)
         {
-            await Table.AnyAsync(expression);
+            var query = Table.AsQueryable();
+            if (!isTracked)
+            {
+                query = query.AsNoTracking();
+            }
+            await query.AnyAsync(expression);
             return true;
         }
 
-        public async Task<int> CountAsync(Expression<Func<T, bool>> expression)
+        public async Task<int> CountAsync(Expression<Func<T, bool>> expression, bool isTracked = true)
         {
-            return await Table.CountAsync(expression);
+            var query = Table.AsQueryable();
+            if (!isTracked)
+            {
+                query = query.AsNoTracking();
+            }
+            return await query.CountAsync(expression);
         }
 
-        public IQueryable<T> GetAll() => Table;
+        public IQueryable<T> GetAll(bool isTracked = true)
+        {
+            var query = Table.AsQueryable();
+            if (!isTracked)
+            {
+                query = query.AsNoTracking();
+            }
+            return query;
+        }
 
 
-        public IQueryable<T> GetAll(Expression<Func<T, bool>> expression) => Table.Where(expression);
+        public IQueryable<T> GetAll(Expression<Func<T, bool>> expression, bool isTracked = true)
+        {
+            var query = Table.AsQueryable();
+            if (!isTracked)
+            {
+                query = query.AsNoTracking();
+            }
+            return query.Where(expression);
+        }
 
+        public async Task<T> GetByIdAsync(string id, bool isTracked = true)
+        {
+            var query = Table.AsQueryable();
+            if (!isTracked)
+            {
+                query = query.AsNoTracking();
+            }
+            return await query.FirstOrDefaultAsync(t=>t.Id == Guid.Parse(id));
+        }
 
-        public async Task<T> GetByIdAsync(string id) => await Table.FirstOrDefaultAsync(t => t.Id == Guid.Parse(id));
+        public async Task<T> GetAsync(Expression<Func<T, bool>> expression, bool isTracked = true)
+        {
+            var query = Table.AsQueryable();
+            if (!isTracked)
+            {
+                query = query.AsNoTracking();
+            }
+            return await query.FirstOrDefaultAsync(expression);
+        }
 
-
-        public async Task<T> GetAsync(Expression<Func<T, bool>> expression) => await Table.FirstOrDefaultAsync(expression);
-    
     }
 }

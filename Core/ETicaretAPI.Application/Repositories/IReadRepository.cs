@@ -11,17 +11,17 @@ namespace ETicaretAPI.Application.Repositories
     public interface IReadRepository<T> : IRepository<T> where T : BaseEntity
     {
         //Tüm verileri getirir
-        IQueryable<T> GetAll();
+        IQueryable<T> GetAll(bool isTracked=true);
         //Tüm verileri filtreli bir şekilde getirir
-        IQueryable<T> GetAll(Expression<Func<T, bool>> expression);
+        IQueryable<T> GetAll(Expression<Func<T, bool>> expression,bool isTracked= true);
         //Verilen filtreye göre ilk kaydı getirir
-        Task<T> GetAsync(Expression<Func<T, bool>> expression);
+        Task<T> GetAsync(Expression<Func<T, bool>> expression, bool isTracked = true);
         //Verilen id ye ait kaydı getirir
-        Task<T> GetByIdAsync(string id);
+        Task<T> GetByIdAsync(string id, bool isTracked = true);
         //Verilen filtreleme neticesinde kayıt var ise true,yok ise false döner
-        Task<bool> AnyAsync(Expression<Func<T,bool>> expression);
+        Task<bool> AnyAsync(Expression<Func<T,bool>> expression, bool isTracked = true);
         //Verilen filtreleme neticesinde kaç kayıt geliyorsa onu count eder
-        Task<int> CountAsync(Expression<Func<T, bool>> expression);
+        Task<int> CountAsync(Expression<Func<T, bool>> expression, bool isTracked = true);
 
     }
 }
