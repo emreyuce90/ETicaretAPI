@@ -9,7 +9,7 @@ namespace ETicaretAPI.Persistence
 {
     static class ConnectionstringHelper
     {
-        static public string ConnectionString
+        static public string PostgreString
         {
             get
             {
@@ -17,6 +17,16 @@ namespace ETicaretAPI.Persistence
                 configurationManager.AddJsonFile("appsettings.json");
                 configurationManager.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(),"../../Presentation/ETicaretAPI.API"));
                 return configurationManager.GetConnectionString("PostgreSql");
+            }
+        }
+
+        static public string MssqlString
+        {
+            get {
+                ConfigurationManager configurationManager = new();
+                configurationManager.AddJsonFile("appsettings.json");
+                configurationManager.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../Presentation/ETicaretAPI.API"));
+                return configurationManager.GetConnectionString("SqlServer");
             }
         }
     }

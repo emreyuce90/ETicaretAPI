@@ -20,6 +20,6 @@ namespace ETicaretAPI.Domain.Entities
 
         //Her sipariş tek bir müşteriye aittir
         public Customer Customer { get; set; }
-        public int CustomerId { get; set; }
+        public Guid CustomerId { get; set; }
     }
 }

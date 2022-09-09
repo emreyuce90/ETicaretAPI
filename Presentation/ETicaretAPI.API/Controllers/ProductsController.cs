@@ -24,19 +24,19 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
-        //await _productWriteRepository.AddRangeAsync(new List<Product>()
-        //{
-        //    new(){ Id = Guid.NewGuid(),Stock =100,Name="Product 1"},
-        //    new(){ Id = Guid.NewGuid(),Stock =200,Name="Product 2"},
-        //    new(){ Id = Guid.NewGuid(),Stock =300,Name="Product 3"},
-        //    new(){ Id = Guid.NewGuid(),Stock =400,Name="Product 4"},
-        //});
-        //await _productWriteRepository.SaveChangesAsync();
-        //return Ok();
-       var p = await _productReadRepository.GetByIdAsync("188f9fc1-adcd-4b8c-8f3d-03f31f98e34d",false);
-        p.Name = "Yüce";
+        await _productWriteRepository.AddRangeAsync(new List<Product>()
+        {
+            new(){ Id = Guid.NewGuid(),Stock =100,Name="Product 1"},
+            new(){ Id = Guid.NewGuid(),Stock =200,Name="Product 2"},
+            new(){ Id = Guid.NewGuid(),Stock =300,Name="Product 3"},
+            new(){ Id = Guid.NewGuid(),Stock =400,Name="Product 4"},
+        });
         await _productWriteRepository.SaveChangesAsync();
         return Ok();
+        //var p = await _productReadRepository.GetByIdAsync("188f9fc1-adcd-4b8c-8f3d-03f31f98e34d",false);
+        // p.Name = "Yüce";
+        // await _productWriteRepository.SaveChangesAsync();
+        // return Ok();
 
     }
 

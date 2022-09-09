@@ -19,7 +19,8 @@ namespace ETicaretAPI.Persistence
     {
         public static void AddPersistentService(this IServiceCollection services)
         {
-            services.AddDbContext<ETicaretAPIDbContext>(option=>option.UseNpgsql(ConnectionstringHelper.ConnectionString));
+            //services.AddDbContext<ETicaretAPIDbContext>(option=>option.UseNpgsql(ConnectionstringHelper.PostgreString));
+            services.AddDbContext<ETicaretAPIDbContext>(opt=>opt.UseSqlServer(ConnectionstringHelper.MssqlString));
             services.AddScoped<IProductReadRepository, ProductReadRepository>();
             services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
