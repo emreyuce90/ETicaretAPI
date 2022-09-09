@@ -24,27 +24,14 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
-        await _productWriteRepository.AddRangeAsync(new List<Product>()
-        {
-            new(){ Id = Guid.NewGuid(),Stock =100,Name="Product 1"},
-            new(){ Id = Guid.NewGuid(),Stock =200,Name="Product 2"},
-            new(){ Id = Guid.NewGuid(),Stock =300,Name="Product 3"},
-            new(){ Id = Guid.NewGuid(),Stock =400,Name="Product 4"},
-        });
+        //await _productWriteRepository.AddAsync(new() { Name = "A",Price=81.18f,Stock=886 });
+        //await _productWriteRepository.SaveChangesAsync();
+        Product p = await _productReadRepository.GetByIdAsync("107A17AE-A37D-407C-5AA4-08DA92A1F223");
+        p.Stock = 182;
         await _productWriteRepository.SaveChangesAsync();
         return Ok();
-        //var p = await _productReadRepository.GetByIdAsync("188f9fc1-adcd-4b8c-8f3d-03f31f98e34d",false);
-        // p.Name = "Yüce";
-        // await _productWriteRepository.SaveChangesAsync();
-        // return Ok();
-
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> FindById(string id)
-    {
-        Product p =await _productReadRepository.GetByIdAsync(id);
-        return Ok(p);
-    }
+
 }
 
