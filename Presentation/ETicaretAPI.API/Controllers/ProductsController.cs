@@ -22,14 +22,10 @@ public class ProductsController : ControllerBase
 
 
     [HttpGet]
-    public async Task<IActionResult> GetProducts()
+    public IActionResult GetProducts()
     {
-        //await _productWriteRepository.AddAsync(new() { Name = "A",Price=81.18f,Stock=886 });
-        //await _productWriteRepository.SaveChangesAsync();
-        Product p = await _productReadRepository.GetByIdAsync("107A17AE-A37D-407C-5AA4-08DA92A1F223");
-        p.Stock = 182;
-        await _productWriteRepository.SaveChangesAsync();
-        return Ok();
+        var products = _productReadRepository.GetAll(false);
+        return Ok(products);
     }
 
 
