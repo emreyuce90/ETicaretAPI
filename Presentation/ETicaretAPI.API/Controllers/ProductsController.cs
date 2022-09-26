@@ -1,4 +1,5 @@
 ﻿using ETicaretAPI.Application.Repositories.ProductRepo;
+using ETicaretAPI.Application.RequestParameters;
 using ETicaretAPI.Application.ViewModels.ProductsVM;
 using ETicaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -23,10 +24,28 @@ public class ProductsController : ControllerBase
 
 
     [HttpGet]
-    public IActionResult GetProducts()
+    public IActionResult GetProducts([FromQuery] Pagination pagination)
     {
-        var products = _productReadRepository.GetAll(false);
-        return Ok(products);
+        var products = _productReadRepository.GetAll(false).Skip(pagination.PageNumber * pagination.PageSize).Take(pagination.PageSize);
+        var productsList = new ProductListWCount();
+        List<ProductListViewModel> plvm = new List<ProductListViewModel>();
+        foreach (var p in products)
+        {
+            //sana gelen productları gez her biri için bir nesne oluşturup bunu ProductListWCount a ekle
+            ProductListViewModel m = new ProductListViewModel();
+
+            m.CreatedDate = p.CreatedDate;
+            m.Id = p.Id.ToString();
+            m.ModifiedDate = p.ModifiedDate;
+            m.Name = p.Name;
+            m.Price = p.Price;
+            m.Stock = p.Stock;
+            plvm.Add(m);
+        }
+        productsList.ProductListViewModel = plvm;
+
+        productsList.TotalCount = _productReadRepository.GetAll(false).Count();
+        return Ok(productsList);
     }
 
     [HttpGet("{id}")]
