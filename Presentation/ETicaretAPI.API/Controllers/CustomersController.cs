@@ -1,8 +1,10 @@
 ﻿using ETicaretAPI.Application.Repositories.CustomerRepo;
+using ETicaretAPI.Application.RequestParameters;
 using ETicaretAPI.Application.ViewModels.CustomerVM;
 using ETicaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ETicaretAPI.API.Controllers
 {
@@ -26,17 +28,20 @@ namespace ETicaretAPI.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _customerWriteRepository.AddAsync(new () {Name = model.Name});
+                await _customerWriteRepository.AddAsync(new() { Name = model.Name });
                 await _customerWriteRepository.SaveChangesAsync();
-                return Created("",model);
+                return Created("", model);
             }
             return NotFound();
         }
 
         [HttpGet]
-        public IActionResult GetCustomer()
+        public async Task<IActionResult> GetCustomer([FromQuery]Pagination pagination)
         {
-            return Ok(_customerReadRepository.GetAll());
+            var customer = _customerReadRepository.GetAll(false).Skip(pagination.PageNumber * pagination.PageSize)
+                .Take(pagination.PageSize).Select(p=>new{p.Name});
+            var totalCustomer = await _customerReadRepository.GetAll(false).CountAsync();
+            return Ok(new { customer, totalCustomer });
         }
     }
 }
