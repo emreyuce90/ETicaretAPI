@@ -15,11 +15,12 @@ public class ProductsController : ControllerBase
 {
     private readonly IProductReadRepository _productReadRepository;
     private readonly IProductWriteRepository _productWriteRepository;
-
-    public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
+    private readonly IWebHostEnvironment _webHostEnvironment;
+    public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment)
     {
         _productReadRepository = productReadRepository;
         _productWriteRepository = productWriteRepository;
+        _webHostEnvironment = webHostEnvironment;
     }
 
 
@@ -100,6 +101,25 @@ public class ProductsController : ControllerBase
         }
         return NotFound();
 
+    }
+    [HttpPost("[action]")]
+    public async Task<IActionResult> Upload()
+    {
+        //wwwye kadar olan kısım
+        string wwwPath = Path.Combine(_webHostEnvironment.WebRootPath, "resources/productImages/");
+        //eğer yoksa bu directoryi oluştur
+        if (!Directory.Exists(wwwPath))
+            Directory.CreateDirectory(wwwPath);
+
+        foreach (IFormFile? file in Request.Form.Files)
+        {
+            //wwwroot/resources/productImages/4534534534545.png
+            string fullPath = Path.Combine(wwwPath, $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}");
+            using var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024);
+            await file.CopyToAsync(stream);
+            await stream.FlushAsync();
+        }
+        return Ok();
     }
 }
 
