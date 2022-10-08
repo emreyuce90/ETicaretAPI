@@ -1,12 +1,14 @@
 using ETicaretAPI.Application.Validators.Products;
 using ETicaretAPI.Persistence;
 using FluentValidation.AspNetCore;
+using ETicaretAPI.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
 builder.Services.AddPersistentService();
+builder.Services.AddInfraStructureService();
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     policy => policy.WithOrigins("http://localhost:4200","https://localhost:4200").AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddControllers().AddFluentValidation(configuration =>configuration.RegisterValidatorsFromAssemblyContaining<ProductAddValidator>());
