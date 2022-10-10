@@ -1,9 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ETicaretAPI.Application.Services
 {
@@ -16,7 +11,6 @@ namespace ETicaretAPI.Application.Services
         /// <param name="formFiles">Upload edilecek dosya</param>
         /// <returns></returns>
         Task<IList<(string fileName, string path)>> UploadFileAsync(string path, IFormFileCollection formFiles);
-        Task<string> FileNameCreatorAsync(string fileName);
         Task<bool> FileCreateAsync(string path, IFormFile file);
 
     }

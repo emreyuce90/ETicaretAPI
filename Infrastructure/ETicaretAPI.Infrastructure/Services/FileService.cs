@@ -1,6 +1,8 @@
-﻿using ETicaretAPI.Application.Services;
+﻿using ETicaretAPI.Application.Operations;
+using ETicaretAPI.Application.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,14 +39,26 @@ namespace ETicaretAPI.Infrastructure.Services
 
         }
 
-        public Task<string> FileNameCreatorAsync(string fileName)
+        async Task<string> FileNameCreatorAsync(string fileName, string path)
         {
-            throw new NotImplementedException();
+            string newName = await Task.Run<string>(async () =>
+            {
+                //jpg,png
+                string extension = Path.GetExtension(fileName);
+                //oldName
+                string oldName = Path.GetFileNameWithoutExtension(fileName);
+
+                string newFilename = $"{NameChanger.ChangeName(oldName)}_{DateTime.UtcNow.ToString("ddMMyyyyHHmmsss")}{extension}";
+
+                return newFilename;
+            });
+
+            return newName;
         }
 
         public async Task<IList<(string fileName, string path)>> UploadFileAsync(string path, IFormFileCollection formFiles)
         {
-            //wwwroot ve gelen path
+            //wwwroot/resources/images
             var filePath = Path.Combine(_webHostEnvironment.WebRootPath, path);
             if (!Directory.Exists(filePath))
             {
@@ -54,18 +68,20 @@ namespace ETicaretAPI.Infrastructure.Services
 
             IList<(string fileName, string path)> a = new List<(string fileName, string path)>();
             List<bool> uploadedFiles = new();
+
             foreach (IFormFile file in formFiles)
             {
-                
-                var newName = await FileNameCreatorAsync(file.FileName);
-                await FileCreateAsync($"{path}//{newName}", file);
-                uploadedFiles.Add(true);
-                if (uploadedFiles.TrueForAll(u => u.Equals(true)))
+
+                var newName =await FileNameCreatorAsync(file.FileName, path);
+                bool result = await FileCreateAsync($"{filePath}//{newName}", file);
+                uploadedFiles.Add(result);
                 a.Add(new(newName, $"{path}//{newName}"));
 
             }
+            if (uploadedFiles.TrueForAll(u => u.Equals(true)))
+                return a;
+            return null;
 
-            return a;
         }
     }
 }
