@@ -16,7 +16,6 @@ namespace ETicaretAPI.API.Controllers;
 [ApiController]
 public class ProductsController : ControllerBase
 {
-    private readonly IFileService _fileService;
     private readonly IProductReadRepository _productReadRepository;
     private readonly IProductWriteRepository _productWriteRepository;
     private readonly IFileReadReadRepository _fileReadRepository;
@@ -29,7 +28,6 @@ public class ProductsController : ControllerBase
     public ProductsController(
         IProductReadRepository productReadRepository,
         IProductWriteRepository productWriteRepository,
-        IFileService fileService,
         IFileReadReadRepository fileReadRepository,
         IFileWriteRepository fileWriteRepository,
         IProductImageWriteRepo productImageWriteRepository,
@@ -39,8 +37,6 @@ public class ProductsController : ControllerBase
     {
         _productReadRepository = productReadRepository;
         _productWriteRepository = productWriteRepository;
-
-        _fileService = fileService;
         _fileReadRepository = fileReadRepository;
         _fileWriteRepository = fileWriteRepository;
         _productImageWriteRepository = productImageWriteRepository;
@@ -131,13 +127,13 @@ public class ProductsController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> Upload()
     {
-        var datas = await _fileService.UploadFileAsync("resources/productImages", Request.Form.Files);
+        //var datas = await _fileService.UploadFileAsync("resources/productImages", Request.Form.Files);
 
-        await _productImageWriteRepository.AddRangeAsync(
-            datas.Select(d => new ProductImages()
-            { FileName = d.fileName, FilePath = d.path })
-            .ToList());
-        await _productImageWriteRepository.SaveChangesAsync();
+        //await _productImageWriteRepository.AddRangeAsync(
+        //    datas.Select(d => new ProductImages()
+        //    { FileName = d.fileName, FilePath = d.path })
+        //    .ToList());
+        //await _productImageWriteRepository.SaveChangesAsync();
         return Ok();
     }
 }
