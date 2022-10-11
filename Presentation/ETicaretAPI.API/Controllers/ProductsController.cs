@@ -1,9 +1,11 @@
-﻿using ETicaretAPI.Application.Repositories.ProductRepo;
+﻿using ETicaretAPI.Application.Repositories.FileRepo;
+using ETicaretAPI.Application.Repositories.InvoiceRepo;
+using ETicaretAPI.Application.Repositories.ProductImageRepo;
+using ETicaretAPI.Application.Repositories.ProductRepo;
 using ETicaretAPI.Application.RequestParameters;
 using ETicaretAPI.Application.Services;
 using ETicaretAPI.Application.ViewModels.ProductsVM;
 using ETicaretAPI.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ETicaretAPI.API.Controllers;
@@ -17,13 +19,34 @@ public class ProductsController : ControllerBase
     private readonly IFileService _fileService;
     private readonly IProductReadRepository _productReadRepository;
     private readonly IProductWriteRepository _productWriteRepository;
-    private readonly IWebHostEnvironment _webHostEnvironment;
-    public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileService fileService)
+    private readonly IFileReadReadRepository _fileReadRepository;
+    private readonly IFileWriteRepository _fileWriteRepository;
+    private readonly IProductImageWriteRepo _productImageWriteRepository;
+    private readonly IProductImageReadRepository _productImageReadRepository;
+    private readonly IInvoiceWriteRepository _invoiceWriteRepository;
+    private readonly IInvoiceReadRepository _invoiceReadRepository;
+
+    public ProductsController(
+        IProductReadRepository productReadRepository,
+        IProductWriteRepository productWriteRepository,
+        IFileService fileService,
+        IFileReadReadRepository fileReadRepository,
+        IFileWriteRepository fileWriteRepository,
+        IProductImageWriteRepo productImageWriteRepository,
+        IProductImageReadRepository productImageReadRepository,
+        IInvoiceWriteRepository invoiceWriteRepository,
+        IInvoiceReadRepository invoiceReadRepository)
     {
         _productReadRepository = productReadRepository;
         _productWriteRepository = productWriteRepository;
-        _webHostEnvironment = webHostEnvironment;
+
         _fileService = fileService;
+        _fileReadRepository = fileReadRepository;
+        _fileWriteRepository = fileWriteRepository;
+        _productImageWriteRepository = productImageWriteRepository;
+        _productImageReadRepository = productImageReadRepository;
+        _invoiceWriteRepository = invoiceWriteRepository;
+        _invoiceReadRepository = invoiceReadRepository;
     }
 
 
@@ -108,7 +131,13 @@ public class ProductsController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> Upload()
     {
-        await _fileService.UploadFileAsync("resources/productImages", Request.Form.Files);
+        var datas = await _fileService.UploadFileAsync("resources/productImages", Request.Form.Files);
+
+        await _productImageWriteRepository.AddRangeAsync(
+            datas.Select(d => new ProductImages()
+            { FileName = d.fileName, FilePath = d.path })
+            .ToList());
+        await _productImageWriteRepository.SaveChangesAsync();
         return Ok();
     }
 }
