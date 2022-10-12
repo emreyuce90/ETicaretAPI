@@ -4,8 +4,11 @@ using ETicaretAPI.Application.Repositories.ProductImageRepo;
 using ETicaretAPI.Application.Repositories.ProductRepo;
 using ETicaretAPI.Application.RequestParameters;
 using ETicaretAPI.Application.Services;
+using ETicaretAPI.Application.Services.Storages;
 using ETicaretAPI.Application.ViewModels.ProductsVM;
 using ETicaretAPI.Domain.Entities;
+using File = ETicaretAPI.Domain.Entities.File;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ETicaretAPI.API.Controllers;
@@ -24,6 +27,8 @@ public class ProductsController : ControllerBase
     private readonly IProductImageReadRepository _productImageReadRepository;
     private readonly IInvoiceWriteRepository _invoiceWriteRepository;
     private readonly IInvoiceReadRepository _invoiceReadRepository;
+    private readonly IStorageService _storageService;
+
 
     public ProductsController(
         IProductReadRepository productReadRepository,
@@ -33,7 +38,8 @@ public class ProductsController : ControllerBase
         IProductImageWriteRepo productImageWriteRepository,
         IProductImageReadRepository productImageReadRepository,
         IInvoiceWriteRepository invoiceWriteRepository,
-        IInvoiceReadRepository invoiceReadRepository)
+        IInvoiceReadRepository invoiceReadRepository,
+        IStorageService storageService)
     {
         _productReadRepository = productReadRepository;
         _productWriteRepository = productWriteRepository;
@@ -43,6 +49,7 @@ public class ProductsController : ControllerBase
         _productImageReadRepository = productImageReadRepository;
         _invoiceWriteRepository = invoiceWriteRepository;
         _invoiceReadRepository = invoiceReadRepository;
+        _storageService = storageService;
     }
 
 
@@ -127,6 +134,9 @@ public class ProductsController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> Upload()
     {
+        var datas = await _storageService.UploadAsync("resources/files",Request.Form.Files);
+        await _fileWriteRepository.AddRangeAsync(datas.Select(d=> new File() {FileName=d.fileName,FilePath = d.path,StorageName=_storageService.StorageName}).ToList());
+        await _fileWriteRepository.SaveChangesAsync();
         //var datas = await _fileService.UploadFileAsync("resources/productImages", Request.Form.Files);
 
         //await _productImageWriteRepository.AddRangeAsync(

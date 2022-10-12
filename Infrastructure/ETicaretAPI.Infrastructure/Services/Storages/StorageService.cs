@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ETicaretAPI.Infrastructure.Services.Storages
 {
-    public class StorageService : IStorage,IStorageService
+    public class StorageService : IStorageService,IStorage
     {
         private readonly IStorage _storage;
 
@@ -11,6 +11,8 @@ namespace ETicaretAPI.Infrastructure.Services.Storages
         {
             _storage = storage;
         }
+
+        public string StorageName => _storage.GetType().Name;
 
         public async Task DeleteFile(string path, string fileName)
         {

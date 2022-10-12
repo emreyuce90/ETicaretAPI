@@ -57,7 +57,7 @@ namespace ETicaretAPI.Infrastructure.Services.Storages.Local
             foreach (IFormFile file in formFiles)
             {
                 //var newName = await FileNameCreatorAsync(file.FileName, path);
-                bool result = await FileCreateAsync($"{path}//{file.Name}", file);
+                bool result = await FileCreateAsync($"{filePath}/{file.Name}", file);
                 datas.Add(new(file.Name, $"{path}//{file.Name}"));
 
             }
