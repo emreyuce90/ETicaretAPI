@@ -137,13 +137,6 @@ public class ProductsController : ControllerBase
         var datas = await _storageService.UploadAsync("files",Request.Form.Files);
         await _fileWriteRepository.AddRangeAsync(datas.Select(d=> new File() {FileName=d.fileName,FilePath = d.path,StorageName=_storageService.StorageName}).ToList());
         await _fileWriteRepository.SaveChangesAsync();
-        //var datas = await _fileService.UploadFileAsync("resources/productImages", Request.Form.Files);
-
-        //await _productImageWriteRepository.AddRangeAsync(
-        //    datas.Select(d => new ProductImages()
-        //    { FileName = d.fileName, FilePath = d.path })
-        //    .ToList());
-        //await _productImageWriteRepository.SaveChangesAsync();
         return Ok();
     }
 }

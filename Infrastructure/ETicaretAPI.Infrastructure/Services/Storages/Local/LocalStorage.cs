@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ETicaretAPI.Infrastructure.Services.Storages.Local
 {
-    public class LocalStorage : ILocalStorage
+    public class LocalStorage : Storage,ILocalStorage
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -56,9 +56,9 @@ namespace ETicaretAPI.Infrastructure.Services.Storages.Local
 
             foreach (IFormFile file in formFiles)
             {
-                //var newName = await FileNameCreatorAsync(file.FileName, path);
-                bool result = await FileCreateAsync($"{filePath}/{file.Name}", file);
-                datas.Add(new(file.Name, $"{path}//{file.Name}"));
+                var newName = await FileNameCreatorAsync(file.FileName, path);
+                bool result = await FileCreateAsync($"{filePath}/{newName}", file);
+                datas.Add(new(file.Name, $"{path}//{newName}"));
 
             }
             return datas;

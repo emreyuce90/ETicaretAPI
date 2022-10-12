@@ -15,25 +15,30 @@ namespace ETicaretAPI.Infrastructure
             services.AddScoped<IStorageService, StorageService>();
         }
 
-        public static void AddStorage(this IServiceCollection services, StorageType storageType)
+        public static void AddStorage<T>(this IServiceCollection services) where T:Storage,IStorage
         {
-            switch (storageType)
-            {
-                case StorageType.Local:
-                    services.AddScoped<IStorage, LocalStorage>();
-                    break;
-                case StorageType.AWS:
-                    services.AddScoped<IStorage, LocalStorage>();
-
-                    break;
-                case StorageType.Azure:
-                    services.AddScoped<IStorage, AzureStorage>();
-
-                    break;
-                default:
-                    services.AddScoped<IStorage, LocalStorage>();
-                    break;
-            }
+            services.AddScoped<IStorage, T>();
         }
+
+        //public static void AddStorage(this IServiceCollection services, StorageType storageType)
+        //{
+        //    switch (storageType)
+        //    {
+        //        case StorageType.Local:
+        //            services.AddScoped<IStorage, LocalStorage>();
+        //            break;
+        //        case StorageType.AWS:
+        //            services.AddScoped<IStorage, LocalStorage>();
+
+        //            break;
+        //        case StorageType.Azure:
+        //            services.AddScoped<IStorage, AzureStorage>();
+
+        //            break;
+        //        default:
+        //            services.AddScoped<IStorage, LocalStorage>();
+        //            break;
+        //    }
+        //}
     }
 }

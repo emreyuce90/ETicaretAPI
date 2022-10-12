@@ -6,8 +6,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace ETicaretAPI.Infrastructure.Services.Storages.Azure
 {
-    public class AzureStorage : IAzureStorage
+    public class AzureStorage : Storage,IAzureStorage
     {
+
         private readonly BlobServiceClient _blobServiceClient;
         BlobContainerClient _blobContainerClient;
         public AzureStorage(IConfiguration configuration)
@@ -44,9 +45,11 @@ namespace ETicaretAPI.Infrastructure.Services.Storages.Azure
 
             foreach (IFormFile? file in formFiles)
             {
-                BlobClient blobClient =_blobContainerClient.GetBlobClient(file.Name);
+                //dosyaya yeni isim ver
+                string newName = await FileNameCreatorAsync(file.FileName, containerName);
+                BlobClient blobClient =_blobContainerClient.GetBlobClient(newName);
                 await blobClient.UploadAsync(file.OpenReadStream());
-                datas.Add((containerName, file.Name));
+                datas.Add(($"{containerName}/{newName}", newName));
             }
             return datas;
         }
