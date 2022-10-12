@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Services\Storages\AWS\" />
-    <Folder Include="Services\Storages\Azure\" />
   </ItemGroup>
 
 </Project>

@@ -134,7 +134,7 @@ public class ProductsController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> Upload()
     {
-        var datas = await _storageService.UploadAsync("resources/files",Request.Form.Files);
+        var datas = await _storageService.UploadAsync("files",Request.Form.Files);
         await _fileWriteRepository.AddRangeAsync(datas.Select(d=> new File() {FileName=d.fileName,FilePath = d.path,StorageName=_storageService.StorageName}).ToList());
         await _fileWriteRepository.SaveChangesAsync();
         //var datas = await _fileService.UploadFileAsync("resources/productImages", Request.Form.Files);

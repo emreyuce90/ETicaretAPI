@@ -1,6 +1,7 @@
 ﻿using ETicaretAPI.Application.Services.Storages;
 using ETicaretAPI.Infrastructure.Enums;
 using ETicaretAPI.Infrastructure.Services.Storages;
+using ETicaretAPI.Infrastructure.Services.Storages.Azure;
 using ETicaretAPI.Infrastructure.Services.Storages.Local;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,6 +27,8 @@ namespace ETicaretAPI.Infrastructure
 
                     break;
                 case StorageType.Azure:
+                    services.AddScoped<IStorage, AzureStorage>();
+
                     break;
                 default:
                     services.AddScoped<IStorage, LocalStorage>();
