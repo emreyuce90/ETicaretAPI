@@ -132,11 +132,31 @@ public class ProductsController : ControllerBase
 
     }
     [HttpPost("[action]")]
-    public async Task<IActionResult> Upload()
+    public async Task<IActionResult> Upload(string id)
     {
-        var datas = await _storageService.UploadAsync("files",Request.Form.Files);
-        await _fileWriteRepository.AddRangeAsync(datas.Select(d=> new File() {FileName=d.fileName,FilePath = d.path,StorageName=_storageService.StorageName}).ToList());
-        await _fileWriteRepository.SaveChangesAsync();
+
+        var datas = await _storageService.UploadAsync("product-images", Request.Form.Files);
+        Product p = await _productReadRepository.GetByIdAsync(id);
+        
+        //dataları dön
+        foreach (var r in datas)
+        {
+            //parametreden gelen product ile resimleri eşleştirebilmek için veritabanından ilgili product nesnesini çek
+            p.ProductImages.Add(new()
+            {
+                //123.png
+                FileName=r.fileName,
+                //product-images
+                FilePath = r.path,
+                //p
+                Products= new List<Product>(){p}
+            });
+            //Bu nesneye filename,path i ver bu nesnenin product
+        }
+        //await _fileWriteRepository.AddRangeAsync(datas.Select(d=> new File() {FileName=d.fileName,FilePath = d.path,StorageName=_storageService.StorageName}).ToList());
+        await _productImageWriteRepository.SaveChangesAsync();
+
+
         return Ok();
     }
 }
