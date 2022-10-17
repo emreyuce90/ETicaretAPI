@@ -10,6 +10,7 @@ using ETicaretAPI.Domain.Entities;
 using File = ETicaretAPI.Domain.Entities.File;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ETicaretAPI.API.Controllers;
 
@@ -19,6 +20,7 @@ namespace ETicaretAPI.API.Controllers;
 [ApiController]
 public class ProductsController : ControllerBase
 {
+    private readonly IConfiguration _configuration;
     private readonly IProductReadRepository _productReadRepository;
     private readonly IProductWriteRepository _productWriteRepository;
     private readonly IFileReadReadRepository _fileReadRepository;
@@ -39,7 +41,8 @@ public class ProductsController : ControllerBase
         IProductImageReadRepository productImageReadRepository,
         IInvoiceWriteRepository invoiceWriteRepository,
         IInvoiceReadRepository invoiceReadRepository,
-        IStorageService storageService)
+        IStorageService storageService,
+        IConfiguration configuration)
     {
         _productReadRepository = productReadRepository;
         _productWriteRepository = productWriteRepository;
@@ -50,6 +53,7 @@ public class ProductsController : ControllerBase
         _invoiceWriteRepository = invoiceWriteRepository;
         _invoiceReadRepository = invoiceReadRepository;
         _storageService = storageService;
+        _configuration = configuration;
     }
 
 
@@ -132,7 +136,7 @@ public class ProductsController : ControllerBase
 
     }
     [HttpPost("[action]")]
-    public async Task<IActionResult> Upload(string id)
+    public async Task<IActionResult> Upload([FromQuery] string id)
     {
 
         var datas = await _storageService.UploadAsync("product-images", Request.Form.Files);
@@ -142,22 +146,48 @@ public class ProductsController : ControllerBase
         foreach (var r in datas)
         {
             //parametreden gelen product ile resimleri eşleştirebilmek için veritabanından ilgili product nesnesini çek
-            p.ProductImages.Add(new()
+            p.ProductImages.Add(new ProductImages()
             {
                 //123.png
                 FileName=r.fileName,
                 //product-images
                 FilePath = r.path,
                 //p
-                Products= new List<Product>(){p}
+                Products= new List<Product>(){p},
+                StorageName = _storageService.StorageName
             });
             //Bu nesneye filename,path i ver bu nesnenin product
         }
         //await _fileWriteRepository.AddRangeAsync(datas.Select(d=> new File() {FileName=d.fileName,FilePath = d.path,StorageName=_storageService.StorageName}).ToList());
-        await _productImageWriteRepository.SaveChangesAsync();
+        try
+        {
+            await _productWriteRepository.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
 
+            throw ex;
+        }
 
         return Ok();
+    }
+
+    [HttpGet("[action]/{id}")]
+    public async Task<IActionResult> GetProductImages([FromRoute]string id)
+    {
+        //gelen id ye ait productların imagelerini de eager loading ile çek ve gelen id ye ait kaydı getir
+        Product?  p = await _productReadRepository.Table.Include(p => p.ProductImages).FirstOrDefaultAsync(p=>p.Id == Guid.Parse(id));
+        if(p != null)
+            //Gelen productın productImageslerine select atarak istediğimiz değerleri anonim tür olarak clienta geri dönelim
+            return Ok(p.ProductImages.Select(pi => new
+            {
+                pi.FileName,
+                Path = $"{_configuration["StorageDefaultPath"]}{pi.FilePath}",
+                pi.Id
+            }));
+        return NotFound();
+        
+
     }
 }
 

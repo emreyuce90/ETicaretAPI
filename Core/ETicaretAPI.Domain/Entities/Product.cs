@@ -12,6 +12,7 @@ namespace ETicaretAPI.Domain.Entities
         public Product()
         {
             Orders = new HashSet<Order>();
+            ProductImages = new HashSet<ProductImages>();
         }
         public string Name { get; set; }
         public int Stock { get; set; }
