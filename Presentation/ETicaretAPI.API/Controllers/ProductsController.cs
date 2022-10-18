@@ -141,7 +141,7 @@ public class ProductsController : ControllerBase
 
         var datas = await _storageService.UploadAsync("product-images", Request.Form.Files);
         Product p = await _productReadRepository.GetByIdAsync(id);
-        
+
         //dataları dön
         foreach (var r in datas)
         {
@@ -149,11 +149,11 @@ public class ProductsController : ControllerBase
             p.ProductImages.Add(new ProductImages()
             {
                 //123.png
-                FileName=r.fileName,
+                FileName = r.fileName,
                 //product-images
                 FilePath = r.path,
                 //p
-                Products= new List<Product>(){p},
+                Products = new List<Product>() { p },
                 StorageName = _storageService.StorageName
             });
             //Bu nesneye filename,path i ver bu nesnenin product
@@ -173,11 +173,11 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("[action]/{id}")]
-    public async Task<IActionResult> GetProductImages([FromRoute]string id)
+    public async Task<IActionResult> GetProductImages([FromRoute] string id)
     {
         //gelen id ye ait productların imagelerini de eager loading ile çek ve gelen id ye ait kaydı getir
-        Product?  p = await _productReadRepository.Table.Include(p => p.ProductImages).FirstOrDefaultAsync(p=>p.Id == Guid.Parse(id));
-        if(p != null)
+        Product? p = await _productReadRepository.Table.Include(p => p.ProductImages).FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+        if (p != null)
             //Gelen productın productImageslerine select atarak istediğimiz değerleri anonim tür olarak clienta geri dönelim
             return Ok(p.ProductImages.Select(pi => new
             {
@@ -186,8 +186,33 @@ public class ProductsController : ControllerBase
                 pi.Id
             }));
         return NotFound();
-        
+
 
     }
+
+    [HttpDelete("[action]/{id}")]
+    public async Task<IActionResult> DeleteProductImage([FromRoute]string id,[FromQuery]string ImageId)
+    {
+        //route tan gelen id ye ait product ı elde edelim
+        Product? product = await _productReadRepository.Table.Include(p => p.ProductImages).FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+        if (product != null)
+        {
+            ProductImages? productImages = product.ProductImages.FirstOrDefault(pi => pi.Id == Guid.Parse(ImageId));
+            if (productImages != null)
+            {
+                product.ProductImages.Remove(productImages);
+                await _productWriteRepository.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+
+        }
+        return NotFound();
+    }
+
+
 }
 
