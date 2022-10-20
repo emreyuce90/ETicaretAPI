@@ -5,11 +5,13 @@ using ETicaretAPI.Infrastructure;
 using ETicaretAPI.Infrastructure.Enums;
 using ETicaretAPI.Infrastructure.Services.Storages.Azure;
 using ETicaretAPI.Infrastructure.Services.Storages.Local;
+using ETicaretAPI.Application.ServiceRegistration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
+builder.Services.AddApplicationService();
 builder.Services.AddPersistentService();
 builder.Services.AddInfraStructureService();
 //builder.Services.AddStorage<LocalStorage>();
