@@ -18,6 +18,7 @@ using ETicaretAPI.Application.Repositories.ProductImageRepo;
 using ETicaretAPI.Persistence.Repositories.ProductImageRepo;
 using ETicaretAPI.Application.Repositories.InvoiceRepo;
 using ETicaretAPI.Persistence.Repositories.InvoiceRepo;
+using ETicaretAPI.Domain.Entities;
 
 namespace ETicaretAPI.Persistence
 {
@@ -27,6 +28,7 @@ namespace ETicaretAPI.Persistence
         {
             //services.AddDbContext<ETicaretAPIDbContext>(option=>option.UseNpgsql(ConnectionstringHelper.PostgreString));
             services.AddDbContext<ETicaretAPIDbContext>(opt=>opt.UseSqlServer(ConnectionstringHelper.MssqlString));
+            services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<ETicaretAPIDbContext>();
             services.AddScoped<IProductReadRepository, ProductReadRepository>();
             services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
