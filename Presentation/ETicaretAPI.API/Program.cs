@@ -6,6 +6,8 @@ using ETicaretAPI.Infrastructure.Enums;
 using ETicaretAPI.Infrastructure.Services.Storages.Azure;
 using ETicaretAPI.Infrastructure.Services.Storages.Local;
 using ETicaretAPI.Application.ServiceRegistration;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +24,18 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(
 builder.Services.AddControllers().AddFluentValidation(configuration =>configuration.RegisterValidatorsFromAssemblyContaining<ProductAddValidator>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthentication("Admin")
+    .AddJwtBearer(options => options.TokenValidationParameters = new()
+    {
+        ValidateAudience = true, //Clientý temsil eder //Token ý tüketen kaynaðý validate et
+        ValidateIssuer = true, //Saðlayýcý temsil eder //Token ý üreten kaynaðý validate eder
+        ValidateLifetime = true,//Token ýn yaþam süresini validate eder
+        ValidateIssuerSigningKey = true, //token ýn gizli keyini validate eder
 
+        ValidAudience = builder.Configuration["Token:Audience"],
+        ValidIssuer = builder.Configuration["Token:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]))
+    }); ;
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
