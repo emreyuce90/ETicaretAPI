@@ -1,4 +1,5 @@
-﻿using ETicaretAPI.Application.Services.Token;
+﻿using ETicaretAPI.Application.Exceptions;
+using ETicaretAPI.Application.Services.Token;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -33,9 +34,14 @@ namespace ETicaretAPI.Application.Features.Commands.AppUser.LoginUser
             var result =await _signInManager.CheckPasswordSignInAsync(user,request.Password,false);
             if (result.Succeeded)
             {
+                //result başarılı ise token üret
                 var createdToken =_tokenCreate.CreateToken(5);
+                return new()
+                {
+                    Token = createdToken
+                };
             }
-            return new();
+            throw new LoginErrorException();
         }
     }
 }
