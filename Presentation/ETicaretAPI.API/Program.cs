@@ -27,7 +27,7 @@ builder.Services.AddControllers().AddFluentValidation(configuration =>configurat
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer("Admin",options => options.TokenValidationParameters = new()
+    .AddJwtBearer("Bearer",options => options.TokenValidationParameters = new()
     {
         ValidateAudience = true, //Clientý temsil eder //Token ý tüketen kaynaðý validate et
         ValidateIssuer = true, //Saðlayýcý temsil eder //Token ý üreten kaynaðý validate eder

@@ -7,6 +7,7 @@ using ETicaretAPI.Application.Features.Queries.Product.GetProductId;
 using ETicaretAPI.Application.Features.Queries.Product.GetProductList;
 using ETicaretAPI.Application.Features.Queries.ProductImage.GetProductImages;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ namespace ETicaretAPI.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(AuthenticationSchemes ="Admin")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
 public class ProductsController : ControllerBase
 {

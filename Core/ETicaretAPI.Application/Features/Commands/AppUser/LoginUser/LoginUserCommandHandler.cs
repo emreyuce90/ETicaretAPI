@@ -35,7 +35,7 @@ namespace ETicaretAPI.Application.Features.Commands.AppUser.LoginUser
             if (result.Succeeded)
             {
                 //result başarılı ise token üret
-                var createdToken =_tokenCreate.CreateToken(5);
+                var createdToken =_tokenCreate.CreateToken(50);
                 return new()
                 {
                     Token = createdToken

@@ -20,7 +20,7 @@ namespace ETicaretAPI.Infrastructure.Services.Token
         public TokenDto CreateToken(int minute)
         {
             TokenDto token = new TokenDto();
-            token.LifeTime = DateTime.UtcNow.AddMinutes(minute);
+            token.LifeTime = DateTime.Now.AddMinutes(minute);
 
             //Gizli şifremizi symmetriğini alalım
             SymmetricSecurityKey symmetric = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
@@ -32,8 +32,10 @@ namespace ETicaretAPI.Infrastructure.Services.Token
             JwtSecurityToken securityToken = new(
                 issuer: _configuration["Token:Issuer"],
                 audience: _configuration["Token:Audience"],
-                notBefore:DateTime.UtcNow,
+                expires:DateTime.Now.AddMinutes(minute),
+                notBefore:DateTime.Now,
                 signingCredentials:credentials
+               
                 );
             //Token oluşturalım
             JwtSecurityTokenHandler tokenHandler = new();
